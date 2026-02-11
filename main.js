@@ -23,7 +23,10 @@ app.whenReady().then(() => {
 
   createWindow();
 
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.checkForUpdates();
 
 });
 
@@ -39,9 +42,14 @@ autoUpdater.on("update-downloaded", () => {
   dialog.showMessageBox({
     type: "info",
     title: "Actualización lista",
-    message: "La app se actualizará al reiniciar."
+    message: "La app se cerrará para actualizar."
   }).then(() => {
     autoUpdater.quitAndInstall();
   });
 });
+
+autoUpdater.on("error", (err) => {
+  console.log("Updater error:", err);
+});
+
 
