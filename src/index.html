@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Timer Metin2</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <h2>Timer BOSS</h2>
+
+  <div class="columns">
+
+    <!-- IMPARES -->
+    <div class="column">
+      <h3>CH IMP</h3>
+
+      <div class="row">CH1 <input id="t0" type="text" value="00:00" maxlength="5"></div>
+      <div class="row">CH3 <input id="t2" type="text" value="00:00" maxlength="5"></div>
+      <div class="row">CH5 <input id="t4" type="text" value="00:00" maxlength="5"></div>
+
+    </div>
+
+    <!-- PARES -->
+    <div class="column">
+      <h3>CH PAR</h3>
+
+      <div class="row">CH2 <input id="t1" type="text" value="00:00" maxlength="5"></div>
+      <div class="row">CH4 <input id="t3" type="text" value="00:00" maxlength="5"></div>
+      <div class="row">CH6 <input id="t5" type="text" value="00:00" maxlength="5"></div>
+
+    </div>
+  </div>
+
+  <hr>
+  <div id="channels"></div>
+
+  <button id="startBtn">Iniciar</button>
+  <button id="stopBtn">Detener</button>
+
+  <script src="render.js"></script>
+</body>
+
+</html>

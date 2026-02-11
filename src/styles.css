@@ -1,0 +1,35 @@
+body {
+  background: #111;
+  color: white;
+  font-family: Arial;
+  padding: 20px;
+}
+
+.columns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column {
+  width: 45%;
+}
+
+.row {
+  margin: 10px 0;
+}
+
+input {
+  width: 60px;
+  margin-left: 10px;
+}
+
+hr {
+  margin: 20px 0;
+  border: 1px solid #333;
+}
+
+.channelBox {
+  background: #222;
+  padding: 8px;
+  margin: 5px 0;
+}
