@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const { autoUpdater } = require("electron-updater");
 const path = require('path');
 
 function createWindow() {
@@ -18,4 +19,29 @@ function createWindow() {
   // win.webContents.openDevTools();
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+
+  createWindow();
+
+  autoUpdater.checkForUpdatesAndNotify();
+
+});
+
+autoUpdater.on("update-available", () => {
+  dialog.showMessageBox({
+    type: "info",
+    title: "Actualización disponible",
+    message: "Se está descargando una nueva versión..."
+  });
+});
+
+autoUpdater.on("update-downloaded", () => {
+  dialog.showMessageBox({
+    type: "info",
+    title: "Actualización lista",
+    message: "La app se actualizará al reiniciar."
+  }).then(() => {
+    autoUpdater.quitAndInstall();
+  });
+});
+

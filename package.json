@@ -1,6 +1,6 @@
 {
   "name": "timer-mt2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Timer Metin2",
   "main": "main.js",
   "author": "Helado",
@@ -20,11 +20,15 @@
       {
         "provider": "github",
         "owner": "iamlolo-dev",
-        "repo": "timer-mt2"
+        "repo": "timer-mt2",
+        "releaseType": "release"
       }
     ],
     "win": {
       "target": "nsis"
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.7.3"
   }
 }
