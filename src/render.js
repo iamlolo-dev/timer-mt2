@@ -1,7 +1,8 @@
 const Store = require('electron-store');
-const alertSound = new Audio("../assets/alert.mp3");
-const preSound = new Audio("assets/prealert.mp3"); // sonido 35s antes
 const store = new Store();
+
+const alertSound = new Audio("../assets/alert.mp3");
+const preSound = new Audio("../assets/prealert.mp3");
 
 let lastTrigger = {};
 let configTimes = [];
@@ -10,19 +11,14 @@ let interval = null;
 
 // 👇 Cargar tiempos guardados o usar 00:00 por defecto
 let savedTimes = store.get("times") || [
-  "00:00",
-  "00:00",
-  "00:00",
-  "00:00",
-  "00:00",
-  "00:00"
+  "00:00","00:00","00:00",
+  "00:00","00:00","00:00"
 ];
 
 function parseTime(value) {
   if (!/^\d{2}:\d{2}$/.test(value)) return null;
 
   const [min, sec] = value.split(":").map(Number);
-
   if (min > 59 || sec > 59) return null;
 
   return { min, sec };
@@ -57,9 +53,7 @@ function saveConfig() {
     originalValues.push(value);
   }
 
-  // 👇 Guardar en almacenamiento local
   store.set("times", originalValues);
-
   return true;
 }
 
@@ -68,12 +62,8 @@ function checkTime() {
 
   configTimes.forEach((cfg, index) => {
 
-    const currentMinutes = now.getMinutes();
-    const currentSeconds = now.getSeconds();
-
     const input = document.getElementById("t" + index);
 
-    // Crear fecha objetivo
     let target = new Date(now);
     target.setMinutes(cfg.min);
     target.setSeconds(cfg.sec);
@@ -85,7 +75,7 @@ function checkTime() {
 
     const diff = Math.floor((target - now) / 1000);
 
-    // 🔔 35 SEGUNDOS ANTES
+    // 🔔 PRE ALERT EXACTO -35s
     if (
       diff === 35 &&
       lastTrigger[index] !== "pre-" + target.getHours()
@@ -95,17 +85,16 @@ function checkTime() {
       lastTrigger[index] = "pre-" + target.getHours();
     }
 
-    // 🔔 EXACTAMENTE EN EL TIEMPO CONFIGURADO
+    // 🔔 ALERTA EXACTA
     if (
       diff === 0 &&
       lastTrigger[index] !== "main-" + target.getHours()
     ) {
-      mainSound.currentTime = 0;
-      mainSound.play();
+      alertSound.currentTime = 0;
+      alertSound.play();
       lastTrigger[index] = "main-" + target.getHours();
     }
 
-    // Actualizar visual
     if (input) {
       input.value = formatTime(diff);
     }
@@ -113,25 +102,32 @@ function checkTime() {
   });
 }
 
+// 🔥 TICK SINCRONIZADO CON EL RELOJ REAL
+function preciseTick() {
+  checkTime();
+
+  const now = new Date();
+  const msToNextSecond = 1000 - now.getMilliseconds();
+
+  interval = setTimeout(preciseTick, msToNextSecond);
+}
+
 function start() {
   if (!saveConfig()) return;
 
-  // Bloquear edición
   for (let i = 0; i < 6; i++) {
     document.getElementById("t" + i).disabled = true;
   }
 
   if (!interval) {
-    checkTime();
-    interval = setInterval(checkTime, 1000);
+    preciseTick();
   }
 }
 
 function stop() {
-  clearInterval(interval);
+  clearTimeout(interval);
   interval = null;
 
-  // Restaurar valores originales
   for (let i = 0; i < 6; i++) {
     const input = document.getElementById("t" + i);
     input.disabled = false;
@@ -141,7 +137,6 @@ function stop() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // 👇 Rellenar inputs con datos guardados
   for (let i = 0; i < 6; i++) {
     document.getElementById("t" + i).value = savedTimes[i];
   }
