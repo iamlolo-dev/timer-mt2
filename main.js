@@ -2,6 +2,10 @@ const { app, BrowserWindow, dialog } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const path = require('path');
 const log = require("electron-log");
+const { ipcMain } = require("electron");
+
+const Store = require('electron-store');
+const store = new Store();
 log.transports.file.level = "info";
 log.info("APP STARTED");
 
@@ -15,12 +19,19 @@ function createWindow() {
     }
   });
 
-  // 👇 ESTA ES LA FORMA CORRECTA
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
 
-  // 👇 abre consola para debug
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 }
+
+ipcMain.handle("get-times", () => {
+  return store.get("times") || ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00"];
+});
+
+ipcMain.handle("set-times", (event, times) => {
+  store.set("times", times);
+});
+
 
 app.whenReady().then(() => {
   log.info("Checking for updates...");
@@ -30,7 +41,7 @@ app.whenReady().then(() => {
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
 
-  autoUpdater.checkForUpdates();
+  // autoUpdater.checkForUpdates();
 
 });
 
